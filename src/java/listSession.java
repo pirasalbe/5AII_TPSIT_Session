@@ -11,8 +11,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-public class listCookie extends HttpServlet {
+public class listSession extends HttpServlet {
     private static int counter = 0; //how many views
     
     //increment value with concurrency
@@ -22,18 +23,19 @@ public class listCookie extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
+        //get session
+        HttpSession session = request.getSession();
+        int value = 1;
+        
+        if(session.getAttribute("counter")==null){
+            session.setAttribute("counter", value);
+        } else{
+            value = (int)session.getAttribute("counter") + 1;
+            session.setAttribute("counter", value);
+        }
+        
         //counter
         Increment();
-        
-        //create cookie
-        String name = request.getParameter("name");
-        String value = request.getParameter("value");
-        
-        Cookie userCookie = new Cookie(name, value);
-        userCookie.setMaxAge(60*60*24*365); //Store cookie for 1 year
-        response.addCookie(userCookie);
-        
-        Cookie[] cookies = request.getCookies();
         
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
@@ -51,35 +53,19 @@ public class listCookie extends HttpServlet {
                         "<div class=\"jumbotron text-center\"><h2>List Cookie</h2></div>" +
                         "</div>");
             
-            //cookies
+            //return to index
             out.println("<div class=\"row\">" +
-                        "<div class=\"col-sm-2\">" + userCookie.getName() + "</div>" +
-                        "<div class=\"col-sm-2\">" + userCookie.getValue() + "</div>" +
-                        "</div>"); //new
-            
-            Cookie temp;
-            if (cookies != null) //old
-            {
-                for(int i=0; i<cookies.length; i++) 
-                {
-                    temp = cookies[i];
-                    
-                    out.println("<div class=\"row\">" +
-                                "<div class=\"col-sm-2\">" + temp.getName() + "</div>" +
-                                "<div class=\"col-sm-2\">" + temp.getValue()+ "</div>" +
-                                "</div>");
-                    
-                }
-            }
-            
-            //create cookie
-            out.println("<div class=\"row\">" +
-                        "<div class=\"alert alert-info col-sm-2\"><a href=\"index.html\">Create Cookie</a></div>" +
-                        "</div>");
+                        "<div class=\"alert alert-info col-sm-2\"><a href=\"index.html\">Return to index</a></div>" +
+                        "</div><br>");
             
             //show views
             out.println("<div class=\"row\">" +
                         "<div class=\"alert alert-warning col-sm-2\">Views: " + counter + "</div>" +
+                        "</div>");
+            
+            //show views per session
+            out.println("<div class=\"row\">" +
+                        "<div class=\"alert alert-warning col-sm-2\">Individual views: " + value + "</div>" +
                         "</div><br>");
             
             out.println("</div>");
