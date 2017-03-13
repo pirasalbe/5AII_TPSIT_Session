@@ -50,7 +50,7 @@ public class listSession extends HttpServlet {
             
             //title
             out.println("<div class=\"row\">" +
-                        "<div class=\"jumbotron text-center\"><h2>List Cookie</h2></div>" +
+                        "<div class=\"jumbotron text-center\"><h2>List Views</h2></div>" +
                         "</div>");
             
             //return to index
